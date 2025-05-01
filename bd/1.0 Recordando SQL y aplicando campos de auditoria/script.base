@@ -1,0 +1,70 @@
+create database ventas;
+
+
+use ventas;
+
+create table  usuarios(
+id_usuario int primary key,
+Nombre varchar(50)NOT NULL,
+created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+on UPDATE CURRENT_TIMESTAMP,
+tipo_usuario_id int,
+created_by INT,updated_by INT,
+deleted BOOLEAN DEFAULT FALSE);
+
+create table productos(
+id_producto int primary key,
+nombre varchar(50) NOT NULL,
+precio int NOT NULL,
+stock int NOT NULL,
+created_at datetime default current_timestamp,
+updated_at int,
+creted_by int,
+deleted boolean default false);
+
+create table ventas(
+id int primary key,
+usuario_id int,
+fecha datetime,
+updated_at datetime default current_timestamp,
+created_at datetime default current_timestamp,
+created_by int,
+updated_by int,
+deleted boolean default false)
+;
+
+create table detalle_ventas(
+id int primary key,
+venta_id int,
+usuario_id int,
+cantidad int,
+precio_unitario int,
+updated_at datetime default current_timestamp,
+created_at datetime default current_timestamp,
+created_by int,
+updated_by int,
+deleted boolean default false);
+
+
+ALTER TABLE detalle_ventas
+ADD CONSTRAINT fk_detalle_ventas_productos
+FOREIGN KEY (producto_id)
+REFERENCES productos(id_producto);
+
+
+ALTER TABLE detalle_ventas
+ADD CONSTRAINT fk_detalle_ventas_ventas
+FOREIGN KEY (venta_id)
+REFERENCES ventas(id);
+
+
+ALTER TABLE ventas
+ADD CONSTRAINT fk_ventas_usuario
+FOREIGN KEY (usuario_id)
+REFERENCES usuarios(id_usuario);
+
+
+
+
+
