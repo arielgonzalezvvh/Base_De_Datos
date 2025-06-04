@@ -1,0 +1,165 @@
+-- Crear la base de datos
+CREATE DATABASE IF NOT EXISTS `sistema_de_venta` 
+  DEFAULT CHARACTER SET utf8mb4 
+  COLLATE utf8mb4_0900_ai_ci;
+USE `sistema_de_venta`;
+
+-- Tabla tipo_usuarios
+CREATE TABLE IF NOT EXISTS `tipo_usuarios` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre_tipo` VARCHAR(50) NOT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_by` INT DEFAULT NULL,
+  `updated_by` INT DEFAULT NULL,
+  `deleted` TINYINT(1) DEFAULT 0,
+  PRIMARY KEY (`id`)
+);
+
+-- Tabla usuarios
+CREATE TABLE IF NOT EXISTS `usuarios` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(100) NOT NULL,
+  `correo` VARCHAR(100) UNIQUE,
+  `password` VARCHAR(255) DEFAULT NULL,
+  `tipo_usuario_id` INT DEFAULT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_by` INT DEFAULT NULL,
+  `updated_by` INT DEFAULT NULL,
+  `deleted` TINYINT(1) DEFAULT 0,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`tipo_usuario_id`) REFERENCES `tipo_usuarios`(`id`)
+);
+
+-- Tabla productos
+CREATE TABLE IF NOT EXISTS `productos` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre_producto` VARCHAR(100) DEFAULT NULL,
+  `descripcion` VARCHAR(300) DEFAULT NULL,
+  `precio` DECIMAL(10,2) DEFAULT 0,
+  `stock` INT DEFAULT 0,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_by` INT DEFAULT NULL,
+  `updated_by` INT DEFAULT NULL,
+  `deleted` TINYINT(1) DEFAULT 0,
+  PRIMARY KEY (`id`)
+);
+
+-- Tabla ventas
+CREATE TABLE IF NOT EXISTS `ventas` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `usuario_id` INT DEFAULT NULL,
+  `fecha_venta` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_by` INT DEFAULT NULL,
+  `updated_by` INT DEFAULT NULL,
+  `deleted` TINYINT(1) DEFAULT 0,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`usuario_id`) REFERENCES `usuarios`(`id`)
+);
+
+-- Tabla detalle_ventas
+CREATE TABLE IF NOT EXISTS `detalle_ventas` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `venta_id` INT DEFAULT NULL,
+  `producto_id` INT DEFAULT NULL,
+  `cantidad` INT NOT NULL,
+  `precio_unitario` DECIMAL(10,2) NOT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_by` INT DEFAULT NULL,
+  `updated_by` INT DEFAULT NULL,
+  `deleted` TINYINT(1) DEFAULT 0,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`venta_id`) REFERENCES `ventas`(`id`),
+  FOREIGN KEY (`producto_id`) REFERENCES `productos`(`id`)
+);
+
+
+Insersiones
+
+INSERT INTO sistema_de_venta.usuarios (
+    nombre, correo, password, tipo_usuario_id,
+    created_at, updated_at, created_by, updated_by, deleted
+)
+VALUES (
+    'Soporte Técnico', 'soporte@sistemaventas.com', 'clave1234', NULL,
+    NOW(), NOW(), NULL, NULL, 0
+);
+
+
+-- Obtener ID del usuario base
+SET @usuario_base_id = (SELECT id FROM sistema_de_venta.usuarios WHERE correo = 'soporte@sistemaventas.com');
+
+INSERT INTO sistema_de_venta.tipo_usuarios (
+    nombre_tipo, created_at, updated_at, created_by, updated_by, deleted
+)
+VALUES
+('Administrador del Sistema', NOW(), NOW(), @usuario_base_id, @usuario_base_id, 0),
+('Ejecutivo de Ventas', NOW(), NOW(), @usuario_base_id, @usuario_base_id, 0);
+
+
+-- Obtener IDs de tipos de usuario
+SET @admin_id = (SELECT id FROM sistema_de_venta.tipo_usuarios WHERE nombre_tipo = 'Administrador del Sistema');
+SET @vendedor_id = (SELECT id FROM sistema_de_venta.tipo_usuarios WHERE nombre_tipo = 'Ejecutivo de Ventas');
+
+INSERT INTO sistema_de_venta.usuarios (
+    nombre, correo, password, tipo_usuario_id,
+    created_at, updated_at, created_by, updated_by, deleted
+)
+VALUES
+('María González', 'maria.gonzalez@ventas.com', 'adminSecure1', @admin_id, NOW(), NOW(), @usuario_base_id, @usuario_base_id, 0),
+('Andrés Rivas', 'andres.rivas@ventas.com', 'vendedor2024', @vendedor_id, NOW(), NOW(), @usuario_base_id, @usuario_base_id, 0),
+('Claudia Méndez', 'claudia.mendez@ventas.com', 'ventas2024', @vendedor_id, NOW(), NOW(), @usuario_base_id, @usuario_base_id, 0);
+
+
+
+INSERT INTO sistema_de_venta.productos (
+    nombre_producto, descripcion, precio, stock,
+    created_at, updated_at, created_by, updated_by, deleted
+)
+VALUES
+('Smartphone Galaxy X', 'Teléfono inteligente con pantalla AMOLED de 6.5 pulgadas', 750.00, 25, NOW(), NOW(), @usuario_base_id, @usuario_base_id, 0),
+('Auriculares Bluetooth', 'Auriculares inalámbricos con cancelación de ruido', 120.00, 40, NOW(), NOW(), @usuario_base_id, @usuario_base_id, 0),
+('Tablet Pro 11', 'Tablet con procesador octa-core y pantalla de 11 pulgadas', 499.99, 15, NOW(), NOW(), @usuario_base_id, @usuario_base_id, 0);
+
+
+-- Obtener IDs de vendedores
+SET @andres_id = (SELECT id FROM sistema_de_venta.usuarios WHERE correo = 'andres.rivas@ventas.com');
+SET @claudia_id = (SELECT id FROM sistema_de_venta.usuarios WHERE correo = 'claudia.mendez@ventas.com');
+
+INSERT INTO sistema_de_venta.ventas (
+    usuario_id, fecha_venta, updated_at, created_by, updated_by, deleted
+)
+VALUES
+(@andres_id, NOW(), NOW(), @usuario_base_id, @usuario_base_id, 0),
+(@claudia_id, NOW(), NOW(), @usuario_base_id, @usuario_base_id, 0);
+
+
+-- Obtener IDs de productos y ventas
+SET @venta1 = (SELECT id FROM sistema_de_venta.ventas ORDER BY id ASC LIMIT 1);
+SET @venta2 = (SELECT id FROM sistema_de_venta.ventas ORDER BY id DESC LIMIT 1);
+
+SET @producto1 = (SELECT id FROM sistema_de_venta.productos WHERE nombre_producto = 'Smartphone Galaxy X');
+SET @producto2 = (SELECT id FROM sistema_de_venta.productos WHERE nombre_producto = 'Auriculares Bluetooth');
+SET @producto3 = (SELECT id FROM sistema_de_venta.productos WHERE nombre_producto = 'Tablet Pro 11');
+
+INSERT INTO sistema_de_venta.detalle_ventas (
+    venta_id, producto_id, cantidad, precio_unitario,
+    updated_at, created_by, updated_by, deleted
+)
+VALUES
+(@venta1, @producto1, 2, 750.00, NOW(), @usuario_base_id, @usuario_base_id, 0),
+(@venta1, @producto2, 1, 120.00, NOW(), @usuario_base_id, @usuario_base_id, 0),
+(@venta2, @producto2, 3, 120.00, NOW(), @usuario_base_id, @usuario_base_id, 0),
+(@venta2, @producto3, 1, 499.99, NOW(), @usuario_base_id, @usuario_base_id, 0);
+
+
+SELECT * FROM sistema_de_venta.usuarios;
+SELECT * FROM sistema_de_venta.tipo_usuarios;
+SELECT * FROM sistema_de_venta.productos;
+SELECT * FROM sistema_de_venta.ventas;
+SELECT * FROM sistema_de_venta.detalle_ventas;
