@@ -1,161 +1,50 @@
--- Crear base de datos
-CREATE DATABASE IF NOT EXISTS sistema_usuarios;
-USE sistema_usuarios;
+-- Crear la base de datos
+CREATE DATABASE IF NOT EXISTS `registro_de_personas`
+DEFAULT CHARACTER SET utf8mb4 
+COLLATE utf8mb4_0900_ai_ci;
+USE `registro_de_personas`;
 
--- Tabla: tipo_usuarios
-CREATE TABLE IF NOT EXISTS tipo_usuarios (
-    id_tipo INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_tipo VARCHAR(50) NOT NULL,
-
-
-    fecha_creacion DATETIME DEFAULT NOW(),
-    fecha_modificacion DATETIME DEFAULT NOW() ON UPDATE NOW(),
-    estado VARCHAR(20) DEFAULT 'activo',
-    usuario_creacion VARCHAR(50),
-
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    created_by INT DEFAULT NULL,
-    updated_by INT DEFAULT NULL,
-    deleted TINYINT(1) DEFAULT 0
+-- Tabla tipo_usuarios
+CREATE TABLE IF NOT EXISTS `tipo_usuarios` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre_tipo` VARCHAR(50) NOT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_by` INT DEFAULT NULL,
+  `updated_by` INT DEFAULT NULL,
+  `deleted` TINYINT(1) DEFAULT 0,
+  PRIMARY KEY (`id`)
 );
 
-
-INSERT INTO tipo_usuarios (nombre_tipo, usuario_creacion, created_by)
-VALUES 
-('Administrador', 'admin', 1),
-('Editor', 'admin', 1),
-('Invitado', 'admin', 1),
-('Soporte', 'admin', 1),
-('Analista', 'admin', 1),
-('Supervisor', 'admin', 1),
-('Desarrollador', 'admin', 1),
-('Tester', 'admin', 1),
-('Cliente', 'admin', 1),
-('Gerente', 'admin', 1);
-
--- Tabla: personas
-CREATE TABLE IF NOT EXISTS personas (
-    id_persona INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50),
-    apellido VARCHAR(50),
-
-    fecha_creacion DATETIME DEFAULT NOW(),
-    fecha_modificacion DATETIME DEFAULT NOW() ON UPDATE NOW(),
-    estado VARCHAR(20) DEFAULT 'activo',
-    usuario_creacion VARCHAR(50),
-
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    created_by INT DEFAULT NULL,
-    updated_by INT DEFAULT NULL,
-    deleted TINYINT(1) DEFAULT 0
+-- Tabla persona
+CREATE TABLE IF NOT EXISTS `persona` (
+  `id` INT NOT NULL AUTO_INCREMENT,       
+  `rut` VARCHAR(12) NOT NULL UNIQUE,       
+  `apellido` VARCHAR(100) NOT NULL,
+  `telefono` VARCHAR(15),
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_by` INT DEFAULT NULL,
+  `updated_by` INT DEFAULT NULL,
+  `deleted` TINYINT(1) DEFAULT 0,
+  PRIMARY KEY (`id`)
 );
 
-
-INSERT INTO personas (nombre, apellido, fecha_creacion, usuario_creacion, created_by)
-VALUES
-('Carlos', 'Gómez', '2025-05-20', 'admin', 1),
-('María', 'López', '2025-05-25', 'admin', 1),
-('Ana', 'Torres', '2025-06-01', 'admin', 1),
-('Juan', 'Pérez', '2025-06-02', 'admin', 1),
-('Pedro', 'Martínez', '2025-05-10', 'admin', 1),
-('Laura', 'Silva', '2025-05-22', 'admin', 1),
-('Ricardo', 'Soto', '2025-05-30', 'admin', 1),
-('Sofía', 'Vega', '2025-06-03', 'admin', 1),
-('Diego', 'Rojas', '2025-05-28', 'admin', 1),
-('Camila', 'Navarro', '2025-06-01', 'admin', 1);
-
--- Tabla: usuarios
-CREATE TABLE IF NOT EXISTS usuarios (
-    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
-    usuario VARCHAR(50) NOT NULL,
-    password VARCHAR(100),
-    id_tipo INT,
-
-
-    fecha_creacion DATETIME DEFAULT NOW(),
-    fecha_modificacion DATETIME DEFAULT NOW() ON UPDATE NOW(),
-    estado VARCHAR(20) DEFAULT 'activo',
-    usuario_creacion VARCHAR(50),
-
-
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    created_by INT DEFAULT NULL,
-    updated_by INT DEFAULT NULL,
-    deleted TINYINT(1) DEFAULT 0,
-
-    FOREIGN KEY (id_tipo) REFERENCES tipo_usuarios(id_tipo)
+-- Tabla usuarios (con FOREIGN KEY a persona y tipo_usuarios)
+CREATE TABLE IF NOT EXISTS `usuarios` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `persona_id` INT NOT NULL,
+  `correo` VARCHAR(100) UNIQUE,
+  `password` VARCHAR(255),
+  `tipo_usuario_id` INT,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_by` INT DEFAULT NULL,
+  `updated_by` INT DEFAULT NULL,
+  `deleted` TINYINT(1) DEFAULT 0,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`persona_id`) REFERENCES `persona`(`id`),
+  FOREIGN KEY (`tipo_usuario_id`) REFERENCES `tipo_usuarios`(`id`)
 );
-
-
-INSERT INTO usuarios (usuario, password, id_tipo, usuario_creacion, created_by)
-VALUES
-('admin', 'admin123', 1, 'admin', 1),          
-('maria01', 'maria123', 2, 'admin', 1),        
-('carlosC', 'passcarlos', 4, 'admin', 1),     
-('anaG', 'ana456', 3, 'admin', 1),            
-('marioM', 'mario789', 5, 'admin', 1),         
-('soporte1', 'soporte123', 1, 'admin', 1),     
-('analista1', 'anal123', 6, 'admin', 1),       
-('dev_julio', 'dev2025', 7, 'admin', 1),       
-('testerZ', 'test@z', 8, 'admin', 1),          
-('clienteX', 'clienteXpass', 9, 'admin', 1);   
-
-
-
-
-
-SELECT usuario, estado
-FROM usuarios
-WHERE deleted = 0;
-
-
-
-SELECT u.usuario, t.nombre_tipo
-FROM usuarios u
-JOIN tipo_usuarios t ON u.id_tipo = t.id_tipo
-WHERE t.nombre_tipo = 'Administrador';
-
-
-
-SELECT usuario
-FROM usuarios
-WHERE usuario LIKE 'a%';
-
-
-
-SELECT nombre, apellido, fecha_creacion
-FROM personas
-WHERE fecha_creacion BETWEEN '2025-05-20' AND '2025-06-02';
-
-
-
-
-SELECT u.usuario, t.nombre_tipo
-FROM usuarios u
-JOIN tipo_usuarios t ON u.id_tipo = t.id_tipo
-WHERE t.nombre_tipo IN ('Soporte', 'Analista') AND u.deleted = 0;
-
-
-
-SELECT usuario
-FROM usuarios
-WHERE usuario LIKE '%e%';
-
-
-
-SELECT u.usuario, t.nombre_tipo
-FROM usuarios u
-JOIN tipo_usuarios t ON u.id_tipo = t.id_tipo
-WHERE t.nombre_tipo <> 'Administrador';
-
-
-
-SELECT u.usuario, t.nombre_tipo
-FROM usuarios u
-JOIN tipo_usuarios t ON u.id_tipo = t.id_tipo
-WHERE t.nombre_tipo = 'Tester' OR u.usuario LIKE 'm%';
 
 
