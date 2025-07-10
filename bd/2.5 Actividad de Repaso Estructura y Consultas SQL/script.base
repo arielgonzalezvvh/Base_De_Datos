@@ -1,0 +1,70 @@
+CREATE DATABASE IF NOT EXISTS ejemploSelect;
+USE ejemploSelect;
+
+-- Tabla: tipo_usuarios
+CREATE TABLE tipo_usuarios (
+    id_tipo INT AUTO_INCREMENT NOT NULL PRIMARY KEY, 
+    nombre_tipo VARCHAR(50) NOT NULL,
+    descripcion_tipo VARCHAR(200) NOT NULL,
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT DEFAULT NULL,
+    updated_by INT DEFAULT NULL,
+    deleted TINYINT(1) NOT NULL DEFAULT 0,
+
+    CONSTRAINT chk_tipo_usuarios_deleted CHECK (deleted IN (0,1))
+);
+
+-- Tabla: usuarios
+CREATE TABLE usuarios (
+    id_usuario INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(200) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    id_tipo_usuario INT NOT NULL,
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT DEFAULT NULL,
+    updated_by INT DEFAULT NULL,
+    deleted TINYINT(1) NOT NULL DEFAULT 0,
+
+    CONSTRAINT fk_usuarios_tipo_usuarios FOREIGN KEY (id_tipo_usuario) REFERENCES tipo_usuarios(id_tipo),
+    CONSTRAINT chk_usuarios_deleted CHECK (deleted IN (0,1)),
+    CONSTRAINT chk_usuarios_id_tipo CHECK (id_tipo_usuario > 0)
+);
+
+-- Tabla: ciudad
+CREATE TABLE ciudad (
+    id_ciudad INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    nombre_ciudad VARCHAR(100) NOT NULL,
+    region VARCHAR(100) NOT NULL,
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT DEFAULT NULL,
+    updated_by INT DEFAULT NULL,
+    deleted TINYINT(1) NOT NULL DEFAULT 0,
+
+    CONSTRAINT chk_ciudad_deleted CHECK (deleted IN (0,1))
+);
+
+-- Tabla: personas
+CREATE TABLE personas (
+    rut VARCHAR(13) NOT NULL PRIMARY KEY,
+    nombre_completo VARCHAR(100) NOT NULL,
+    fecha_nac DATE NOT NULL,
+    id_usuario INT NOT NULL,
+    id_ciudad INT NOT NULL,
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT DEFAULT NULL,
+    updated_by INT DEFAULT NULL,
+    deleted TINYINT(1) NOT NULL DEFAULT 0,
+
+    CONSTRAINT fk_personas_usuarios FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
+    CONSTRAINT fk_personas_ciudad FOREIGN KEY (id_ciudad) REFERENCES ciudad(id_ciudad),
+    CONSTRAINT chk_personas_deleted CHECK (deleted IN (0,1))
+);

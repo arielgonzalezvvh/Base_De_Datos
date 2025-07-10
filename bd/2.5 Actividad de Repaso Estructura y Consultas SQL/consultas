@@ -1,0 +1,42 @@
+SELECT username, email, id_tipo_usuario
+FROM usuarios
+WHERE id_tipo_usuario = (
+    SELECT id_tipo FROM tipo_usuarios 
+    WHERE nombre_tipo = 'Cliente' AND deleted = 0
+)
+AND deleted = 0;
+
+
+SELECT nombre_completo, fecha_nac, id_usuario
+FROM personas
+WHERE YEAR(fecha_nac) > 1990
+AND deleted = 0;
+
+
+SELECT nombre_completo, id_usuario
+FROM personas
+WHERE nombre_completo LIKE 'A%'
+AND deleted = 0;
+
+
+SELECT nombre_completo, id_usuario, id_ciudad
+FROM personas
+WHERE id_ciudad <> 2
+AND deleted = 0;
+
+
+SELECT username
+FROM usuarios
+WHERE CHAR_LENGTH(username) > 7
+AND deleted = 0;
+
+
+SELECT id_usuario
+FROM personas
+WHERE YEAR(fecha_nac) BETWEEN 1990 AND 1995
+AND deleted = 0;
+
+
+
+
+
