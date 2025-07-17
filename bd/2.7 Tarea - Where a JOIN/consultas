@@ -1,0 +1,70 @@
+SELECT 
+    u.username,
+    u.email,
+    t.nombre_tipo
+FROM usuarios u
+JOIN tipo_usuarios t ON u.id_tipo_usuario = t.id_tipo
+WHERE t.nombre_tipo = 'Cliente' AND u.deleted = 0 AND t.deleted = 0;
+
+
+SELECT
+    p.nombre_completo,
+    p.fecha_nac,
+    t.nombre_tipo
+FROM personas p
+JOIN usuarios u ON p.id_usuario = u.id_usuario
+JOIN tipo_usuarios t ON u.id_tipo_usuario = t.id_tipo
+WHERE YEAR(p.fecha_nac) > 1990
+  AND p.deleted = 0
+  AND u.deleted = 0
+  AND t.deleted = 0;
+  
+  
+  select
+  p.nombre_completo,
+  u.email
+from personas p
+join usuarios u on p.id_usuario = u.id_usuario
+WHERE p.nombre_completo LIKE 'A%'
+  AND p.deleted = 0
+  AND u.deleted = 0;
+  
+  SELECT 
+  u.username, 
+  u.email
+FROM usuarios u
+WHERE u.email LIKE '%@mail.com'
+  AND u.deleted = 0;
+  
+  
+  
+	select 
+    p.nombre_completo,
+    u.username,
+    c.nombre_ciudad
+    from personas p
+    JOIN usuarios u ON p.id_usuario = u.id_usuario
+    JOIN ciudad c ON p.id_ciudad = c.id_ciudad
+	WHERE c.id_ciudad = 2;
+
+
+
+SELECT 
+  username, 
+  email
+FROM usuarios
+WHERE LENGTH(username) > 7
+  AND deleted = 0;
+
+
+
+SELECT 
+  u.username,
+  p.fecha_nac
+FROM personas p
+JOIN usuarios u ON p.id_usuario = u.id_usuario
+WHERE p.fecha_nac BETWEEN '1990-01-01' AND '1995-12-31'
+  AND p.deleted = 0
+  AND u.deleted = 0;
+
+

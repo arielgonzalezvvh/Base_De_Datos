@@ -1,0 +1,58 @@
+CREATE DATABASE IF NOT EXISTS sistema_usuarios_auditoria;
+USE sistema_usuarios_auditoria;
+
+-- Tabla: tipo_usuarios
+CREATE TABLE tipo_usuarios (
+    id_tipo INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_tipo VARCHAR(50) NOT NULL,
+    descripcion_tipo VARCHAR(200) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_by INT,
+    deleted TINYINT(1) DEFAULT 0
+);
+
+-- Tabla: ciudad
+CREATE TABLE ciudad (
+    id_ciudad INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_ciudad VARCHAR(50) NOT NULL,
+    region VARCHAR(100) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_by INT,
+    deleted TINYINT(1) DEFAULT 0
+);
+
+-- Tabla: usuarios
+CREATE TABLE usuarios (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    id_tipo_usuario INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_by INT,
+    deleted TINYINT(1) DEFAULT 0,
+    FOREIGN KEY (id_tipo_usuario) REFERENCES tipo_usuarios(id_tipo)
+);
+
+-- Tabla: personas
+CREATE TABLE personas (
+    id_persona INT AUTO_INCREMENT PRIMARY KEY,
+    rut VARCHAR(15) NOT NULL,
+    nombre_completo VARCHAR(100) NOT NULL,
+    fecha_nac DATE NOT NULL,
+    id_usuario INT,
+    id_ciudad INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_by INT,
+    deleted TINYINT(1) DEFAULT 0,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
+    FOREIGN KEY (id_ciudad) REFERENCES ciudad(id_ciudad)
+);
