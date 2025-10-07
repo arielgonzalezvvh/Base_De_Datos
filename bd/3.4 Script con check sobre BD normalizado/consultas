@@ -1,0 +1,49 @@
+
+SELECT * FROM ciudades WHERE deleted = 0;
+
+SELECT * FROM comunas WHERE deleted = 0;
+
+SELECT * FROM plazas WHERE deleted = 0;
+
+SELECT * FROM estado_camaras WHERE deleted = 0;
+
+
+SELECT * FROM camaras WHERE deleted = 0;
+
+SELECT * FROM estado_reportes WHERE deleted = 0;
+
+SELECT * FROM juntas_vecinos WHERE deleted = 0;
+
+SELECT * FROM personas WHERE deleted = 0;
+
+SELECT * FROM tipo_usuario WHERE deleted = 0;
+
+SELECT * FROM usuarios WHERE deleted = 0;
+
+SELECT * FROM tipo_reporte WHERE deleted = 0;
+
+SELECT * FROM reportes WHERE deleted = 0;
+
+SELECT nombre AS plaza, id_comuna FROM plazas WHERE deleted = 0;
+SELECT nombre_comuna, id_ciudad FROM comunas WHERE deleted = 0;
+
+
+SELECT id_camara, id_plaza, id_estado_camara, ubicacion FROM camaras WHERE deleted = 0;
+SELECT id_estado_camara, nombre_estado FROM estado_camaras WHERE deleted = 0;
+
+SELECT id_reporte, id_usuario, id_plaza, id_tipo_reporte, id_estado_reporte, descripcion 
+FROM reportes WHERE deleted = 0;
+SELECT id_usuario, nombre_usuario FROM usuarios WHERE deleted = 0;
+SELECT id_tipo_reporte, nombre_tipo FROM tipo_reporte WHERE deleted = 0;
+SELECT id_estado_reporte, nombre_estado FROM estado_reportes WHERE deleted = 0;
+
+SELECT id_persona, nombre, id_comuna FROM personas WHERE deleted = 0;
+SELECT id_comuna, nombre_comuna FROM comunas WHERE deleted = 0;
+
+SELECT id_junta, nombre_junta, id_plaza FROM juntas_vecinos WHERE deleted = 0;
+SELECT id_plaza, nombre FROM plazas WHERE deleted = 0;
+
+
+
+
+
