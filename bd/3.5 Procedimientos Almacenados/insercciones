@@ -1,0 +1,128 @@
+/* =========================
+    3) Inserciones base
+   ========================= */
+INSERT INTO categoria(nombre) VALUES ('Bebidas'),('Snacks'),('Limpieza');
+
+/* =========================
+    4) Procedimientos
+   ========================= */
+
+/* ---------- PRODUCTO ---------- */
+DELIMITER //
+CREATE PROCEDURE sp_producto_insertar(
+    IN p_nombre VARCHAR(120),
+    IN p_precio DECIMAL(10,2),
+    IN p_categoria_id INT
+)
+BEGIN
+    INSERT INTO producto(nombre, precio, categoria_id, deleted)
+    VALUES (p_nombre, p_precio, p_categoria_id, 0);
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE sp_producto_listar_activos()
+BEGIN
+    SELECT 
+    p.id,
+    p.nombre  AS producto,
+    p.precio,
+    c.nombre  AS categoria
+    FROM producto p
+    INNER JOIN categoria c ON p.categoria_id = c.id
+    WHERE p.deleted = 0
+    ORDER BY p.nombre;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE sp_producto_borrado_logico(
+    IN p_id INT
+)
+BEGIN
+    UPDATE producto
+    SET deleted = 1
+    WHERE id = p_id;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE sp_producto_listar_todo()
+BEGIN
+    SELECT 
+    p.id,
+    p.nombre  AS producto,
+    p.precio,
+    c.nombre  AS categoria,
+    p.deleted
+    FROM producto p
+    INNER JOIN categoria c ON p.categoria_id = c.id
+    ORDER BY p.nombre;
+END//
+DELIMITER ;
+
+/* ---------- CATEGORÍA ---------- */
+DELIMITER //
+CREATE PROCEDURE sp_categoria_insertar(
+    IN p_nombre VARCHAR(100)
+)
+BEGIN
+    INSERT INTO categoria(nombre, deleted)
+    VALUES (p_nombre, 0);
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE sp_categoria_borrado_logico(
+    IN p_id INT
+)
+BEGIN
+    UPDATE categoria
+    SET deleted = 1
+    WHERE id = p_id;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE sp_categoria_listar_activos()
+BEGIN
+    SELECT id, nombre, deleted, created_at
+    FROM categoria
+    WHERE deleted = 0
+    ORDER BY nombre;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE sp_categoria_listar_todo()
+BEGIN
+    SELECT id, nombre, deleted, created_at
+    FROM categoria
+    ORDER BY nombre;
+END//
+DELIMITER ;
+
+/* =========================
+    5) Inserciones mediante SP
+   ========================= */
+CALL sp_producto_insertar('Agua 1.5L',900,1);
+CALL sp_producto_insertar('Galletas X',1200,2);
+CALL sp_producto_insertar('Detergente',2500,3);
+CALL sp_categoria_insertar('Carnes');
+CALL sp_categoria_insertar('Lácteos');
+
+/* =========================
+    6) Consultas de verificación
+   ========================= */
+SELECT * FROM producto;
+SELECT * FROM producto WHERE deleted = 0;
+
+CALL sp_producto_listar_activos();
+CALL sp_producto_listar_todo();
+CALL sp_producto_borrado_logico(1);
+CALL sp_producto_listar_todo();
+
+CALL sp_categoria_listar_activos();
+CALL sp_categoria_borrado_logico(2);
+CALL sp_categoria_listar_todo();
+SELECT * FROM categoria;
