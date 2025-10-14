@@ -1,0 +1,83 @@
+DELIMITER //
+CREATE PROCEDURE sp_ciudad_insertar(IN p_nombre_ciudad VARCHAR(100), IN p_created_by INT)
+BEGIN
+    INSERT INTO ciudades (nombre_ciudad, created_by, deleted)
+    VALUES (p_nombre_ciudad, p_created_by, 0);
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE sp_ciudad_borrado_logico(IN p_id INT)
+BEGIN
+    UPDATE ciudades SET deleted = 1 WHERE id_ciudad = p_id;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE sp_ciudad_listar_activos()
+BEGIN
+    SELECT * FROM ciudades WHERE deleted = 0 ORDER BY nombre_ciudad;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE sp_ciudad_listar_todo()
+BEGIN
+    SELECT * FROM ciudades ORDER BY nombre_ciudad;
+END//
+DELIMITER ;
+
+
+DELIMITER //
+CREATE PROCEDURE sp_comuna_insertar(
+    IN p_id_ciudad INT,
+    IN p_nombre_comuna VARCHAR(100),
+    IN p_created_by INT
+)
+BEGIN
+    INSERT INTO comunas (id_ciudad, nombre_comuna, created_by, deleted)
+    VALUES (p_id_ciudad, p_nombre_comuna, p_created_by, 0);
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE sp_comuna_borrado_logico(IN p_id INT)
+BEGIN
+    UPDATE comunas SET deleted = 1 WHERE id_comuna = p_id;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE sp_comuna_listar_activos()
+BEGIN
+    SELECT c.id_comuna, c.nombre_comuna, ci.nombre_ciudad
+    FROM comunas c
+    INNER JOIN ciudades ci ON c.id_ciudad = ci.id_ciudad
+    WHERE c.deleted = 0
+    ORDER BY c.nombre_comuna;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE sp_comuna_listar_todo()
+BEGIN
+    SELECT c.id_comuna, c.nombre_comuna, ci.nombre_ciudad, c.deleted
+    FROM comunas c
+    INNER JOIN ciudades ci ON c.id_ciudad = ci.id_ciudad
+    ORDER BY c.nombre_comuna;
+END//
+DELIMITER ;
+
+
+DELIMITER //
+CREATE PROCEDURE sp_ciudad_insertar(
+    IN p_nombre_ciudad VARCHAR(100),
+    IN p_created_by INT
+)
+BEGIN
+    INSERT INTO ciudades (nombre_ciudad, created_by, deleted)
+    VALUES (p_nombre_ciudad, p_created_by, 0);
+END//
+DELIMITER ;
+
+
