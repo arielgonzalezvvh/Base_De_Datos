@@ -1,0 +1,159 @@
+CREATE DATABASE IF NOT EXISTS seguridad_plazas;
+USE seguridad_plazas;
+
+CREATE TABLE ciudades (
+    id_ciudad INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_ciudad VARCHAR(100) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_by INT,
+    deleted TINYINT(1) DEFAULT 0
+);
+
+CREATE TABLE comunas (
+    id_comuna INT AUTO_INCREMENT PRIMARY KEY,
+    id_ciudad INT NOT NULL,
+    nombre_comuna VARCHAR(100) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_by INT,
+    deleted TINYINT(1) DEFAULT 0,
+    FOREIGN KEY (id_ciudad) REFERENCES ciudades(id_ciudad)
+);
+
+CREATE TABLE plazas (
+    id_plaza INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    direccion VARCHAR(255),
+    sector VARCHAR(100),
+    id_comuna INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_by INT,
+    deleted TINYINT(1) DEFAULT 0,
+    FOREIGN KEY (id_comuna) REFERENCES comunas(id_comuna)
+);
+
+CREATE TABLE estado_camaras (
+    id_estado_camara INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_estado VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_by INT,
+    deleted TINYINT(1) DEFAULT 0
+);
+
+CREATE TABLE camaras (
+    id_camara INT AUTO_INCREMENT PRIMARY KEY,
+    id_plaza INT NOT NULL,
+    ubicacion VARCHAR(255),
+    id_estado_camara INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_by INT,
+    deleted TINYINT(1) DEFAULT 0,
+    FOREIGN KEY (id_plaza) REFERENCES plazas(id_plaza),
+    FOREIGN KEY (id_estado_camara) REFERENCES estado_camaras(id_estado_camara)
+);
+
+CREATE TABLE estado_reportes (
+    id_estado_reporte INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_estado VARCHAR(100),
+    descripcion VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_by INT,
+    deleted TINYINT(1) DEFAULT 0
+);
+
+CREATE TABLE juntas_vecinos (
+    id_junta INT AUTO_INCREMENT PRIMARY KEY,
+    id_plaza INT NOT NULL,
+    nombre_junta VARCHAR(100),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_by INT,
+    deleted TINYINT(1) DEFAULT 0,
+    FOREIGN KEY (id_plaza) REFERENCES plazas(id_plaza)
+);
+
+CREATE TABLE personas (
+    id_persona INT AUTO_INCREMENT PRIMARY KEY,
+    rut VARCHAR(15),
+    nombre VARCHAR(100),
+    direccion VARCHAR(255),
+    telefono VARCHAR(20),
+    correo_electronico VARCHAR(100),
+    id_comuna INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_by INT,
+    deleted TINYINT(1) DEFAULT 0,
+    FOREIGN KEY (id_comuna) REFERENCES comunas(id_comuna)
+);
+
+CREATE TABLE tipo_usuario (
+    id_tipo_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_tipo VARCHAR(50),
+    descripcion VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_by INT,
+    deleted TINYINT(1) DEFAULT 0
+);
+
+CREATE TABLE usuarios (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    id_persona INT NOT NULL,
+    id_tipo_usuario INT NOT NULL,
+    nombre_usuario VARCHAR(50),
+    contrasena VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_by INT,
+    deleted TINYINT(1) DEFAULT 0,
+    FOREIGN KEY (id_persona) REFERENCES personas(id_persona),
+    FOREIGN KEY (id_tipo_usuario) REFERENCES tipo_usuario(id_tipo_usuario)
+);
+
+CREATE TABLE tipo_reporte (
+    id_tipo_reporte INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_tipo VARCHAR(50),
+    descripcion VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_by INT,
+    deleted TINYINT(1) DEFAULT 0
+);
+
+CREATE TABLE reportes (
+    id_reporte INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    id_plaza INT NOT NULL,
+    id_tipo_reporte INT NOT NULL,
+    id_estado_reporte INT NOT NULL,
+    descripcion TEXT NOT NULL,
+    fecha_reporte DATE NOT NULL,
+    hora_reporte TIME NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_by INT,
+    deleted TINYINT(1) DEFAULT 0,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
+    FOREIGN KEY (id_plaza) REFERENCES plazas(id_plaza),
+    FOREIGN KEY (id_tipo_reporte) REFERENCES tipo_reporte(id_tipo_reporte),
+    FOREIGN KEY (id_estado_reporte) REFERENCES estado_reportes(id_estado_reporte)
+);

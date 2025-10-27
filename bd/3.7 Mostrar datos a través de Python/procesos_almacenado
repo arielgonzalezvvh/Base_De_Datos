@@ -1,0 +1,327 @@
+USE seguridad_plazas;
+
+-- =========================
+-- TABLA: ciudades
+-- =========================
+DELIMITER //
+
+CREATE PROCEDURE sp_insertar_ciudad(IN p_nombre VARCHAR(100), IN p_created_by INT, OUT p_nuevo_id INT)
+BEGIN
+    INSERT INTO ciudades(nombre_ciudad, created_by) VALUES(p_nombre, p_created_by);
+    SET p_nuevo_id = LAST_INSERT_ID();
+END//
+
+CREATE PROCEDURE sp_listar_ciudades_activos()
+BEGIN
+    SELECT * FROM ciudades WHERE deleted = 0;
+END//
+
+CREATE PROCEDURE sp_listar_ciudades_todos()
+BEGIN
+    SELECT * FROM ciudades;
+END//
+
+CREATE PROCEDURE sp_borrado_logico_ciudad(IN p_id INT)
+BEGIN
+    UPDATE ciudades SET deleted = 1, updated_at = NOW() WHERE id_ciudad = p_id AND deleted = 0;
+END//
+
+CREATE PROCEDURE sp_restaurar_ciudad(IN p_id INT)
+BEGIN
+    UPDATE ciudades SET deleted = 0, updated_at = NOW() WHERE id_ciudad = p_id AND deleted = 1;
+END//
+
+-- =========================
+-- TABLA: comunas
+-- =========================
+CREATE PROCEDURE sp_insertar_comuna(IN p_id_ciudad INT, IN p_nombre VARCHAR(100), IN p_created_by INT, OUT p_nuevo_id INT)
+BEGIN
+    INSERT INTO comunas(id_ciudad, nombre_comuna, created_by) VALUES(p_id_ciudad, p_nombre, p_created_by);
+    SET p_nuevo_id = LAST_INSERT_ID();
+END//
+
+CREATE PROCEDURE sp_listar_comunas_activos()
+BEGIN
+    SELECT * FROM comunas WHERE deleted = 0;
+END//
+
+CREATE PROCEDURE sp_listar_comunas_todos()
+BEGIN
+    SELECT * FROM comunas;
+END//
+
+CREATE PROCEDURE sp_borrado_logico_comuna(IN p_id INT)
+BEGIN
+    UPDATE comunas SET deleted = 1, updated_at = NOW() WHERE id_comuna = p_id AND deleted = 0;
+END//
+
+CREATE PROCEDURE sp_restaurar_comuna(IN p_id INT)
+BEGIN
+    UPDATE comunas SET deleted = 0, updated_at = NOW() WHERE id_comuna = p_id AND deleted = 1;
+END//
+
+-- =========================
+-- TABLA: plazas
+-- =========================
+CREATE PROCEDURE sp_insertar_plaza(IN p_nombre VARCHAR(100), IN p_direccion VARCHAR(255), IN p_sector VARCHAR(100), IN p_id_comuna INT, IN p_created_by INT, OUT p_nuevo_id INT)
+BEGIN
+    INSERT INTO plazas(nombre, direccion, sector, id_comuna, created_by) VALUES(p_nombre, p_direccion, p_sector, p_id_comuna, p_created_by);
+    SET p_nuevo_id = LAST_INSERT_ID();
+END//
+
+CREATE PROCEDURE sp_listar_plazas_activos()
+BEGIN
+    SELECT * FROM plazas WHERE deleted = 0;
+END//
+
+CREATE PROCEDURE sp_listar_plazas_todos()
+BEGIN
+    SELECT * FROM plazas;
+END//
+
+CREATE PROCEDURE sp_borrado_logico_plaza(IN p_id INT)
+BEGIN
+    UPDATE plazas SET deleted = 1, updated_at = NOW() WHERE id_plaza = p_id AND deleted = 0;
+END//
+
+CREATE PROCEDURE sp_restaurar_plaza(IN p_id INT)
+BEGIN
+    UPDATE plazas SET deleted = 0, updated_at = NOW() WHERE id_plaza = p_id AND deleted = 1;
+END//
+
+-- =========================
+-- TABLA: estado_camaras
+-- =========================
+CREATE PROCEDURE sp_insertar_estado_camara(IN p_nombre VARCHAR(100), IN p_descripcion VARCHAR(255), IN p_created_by INT, OUT p_nuevo_id INT)
+BEGIN
+    INSERT INTO estado_camaras(nombre_estado, descripcion, created_by) VALUES(p_nombre, p_descripcion, p_created_by);
+    SET p_nuevo_id = LAST_INSERT_ID();
+END//
+
+CREATE PROCEDURE sp_listar_estado_camaras_activos()
+BEGIN
+    SELECT * FROM estado_camaras WHERE deleted = 0;
+END//
+
+CREATE PROCEDURE sp_listar_estado_camaras_todos()
+BEGIN
+    SELECT * FROM estado_camaras;
+END//
+
+CREATE PROCEDURE sp_borrado_logico_estado_camara(IN p_id INT)
+BEGIN
+    UPDATE estado_camaras SET deleted = 1, updated_at = NOW() WHERE id_estado_camara = p_id AND deleted = 0;
+END//
+
+CREATE PROCEDURE sp_restaurar_estado_camara(IN p_id INT)
+BEGIN
+    UPDATE estado_camaras SET deleted = 0, updated_at = NOW() WHERE id_estado_camara = p_id AND deleted = 1;
+END//
+
+-- =========================
+-- TABLA: camaras
+-- =========================
+CREATE PROCEDURE sp_insertar_camara(IN p_id_plaza INT, IN p_ubicacion VARCHAR(255), IN p_id_estado_camara INT, IN p_created_by INT, OUT p_nuevo_id INT)
+BEGIN
+    INSERT INTO camaras(id_plaza, ubicacion, id_estado_camara, created_by) VALUES(p_id_plaza, p_ubicacion, p_id_estado_camara, p_created_by);
+    SET p_nuevo_id = LAST_INSERT_ID();
+END//
+
+CREATE PROCEDURE sp_listar_camaras_activos()
+BEGIN
+    SELECT * FROM camaras WHERE deleted = 0;
+END//
+
+CREATE PROCEDURE sp_listar_camaras_todos()
+BEGIN
+    SELECT * FROM camaras;
+END//
+
+CREATE PROCEDURE sp_borrado_logico_camara(IN p_id INT)
+BEGIN
+    UPDATE camaras SET deleted = 1, updated_at = NOW() WHERE id_camara = p_id AND deleted = 0;
+END//
+
+CREATE PROCEDURE sp_restaurar_camara(IN p_id INT)
+BEGIN
+    UPDATE camaras SET deleted = 0, updated_at = NOW() WHERE id_camara = p_id AND deleted = 1;
+END//
+
+-- =========================
+-- TABLA: estado_reportes
+-- =========================
+CREATE PROCEDURE sp_insertar_estado_reporte(IN p_nombre VARCHAR(100), IN p_descripcion VARCHAR(255), IN p_created_by INT, OUT p_nuevo_id INT)
+BEGIN
+    INSERT INTO estado_reportes(nombre_estado, descripcion, created_by) VALUES(p_nombre, p_descripcion, p_created_by);
+    SET p_nuevo_id = LAST_INSERT_ID();
+END//
+
+CREATE PROCEDURE sp_listar_estado_reportes_activos()
+BEGIN
+    SELECT * FROM estado_reportes WHERE deleted = 0;
+END//
+
+CREATE PROCEDURE sp_listar_estado_reportes_todos()
+BEGIN
+    SELECT * FROM estado_reportes;
+END//
+
+CREATE PROCEDURE sp_borrado_logico_estado_reporte(IN p_id INT)
+BEGIN
+    UPDATE estado_reportes SET deleted = 1, updated_at = NOW() WHERE id_estado_reporte = p_id AND deleted = 0;
+END//
+
+CREATE PROCEDURE sp_restaurar_estado_reporte(IN p_id INT)
+BEGIN
+    UPDATE estado_reportes SET deleted = 0, updated_at = NOW() WHERE id_estado_reporte = p_id AND deleted = 1;
+END//
+
+-- =========================
+-- TABLA: juntas_vecinos
+-- =========================
+CREATE PROCEDURE sp_insertar_junta_vecinos(IN p_id_plaza INT, IN p_nombre VARCHAR(100), IN p_created_by INT, OUT p_nuevo_id INT)
+BEGIN
+    INSERT INTO juntas_vecinos(id_plaza, nombre_junta, created_by) VALUES(p_id_plaza, p_nombre, p_created_by);
+    SET p_nuevo_id = LAST_INSERT_ID();
+END//
+
+CREATE PROCEDURE sp_listar_juntas_vecinos_activos()
+BEGIN
+    SELECT * FROM juntas_vecinos WHERE deleted = 0;
+END//
+
+CREATE PROCEDURE sp_listar_juntas_vecinos_todos()
+BEGIN
+    SELECT * FROM juntas_vecinos;
+END//
+
+CREATE PROCEDURE sp_borrado_logico_junta_vecinos(IN p_id INT)
+BEGIN
+    UPDATE juntas_vecinos SET deleted = 1, updated_at = NOW() WHERE id_junta = p_id AND deleted = 0;
+END//
+
+CREATE PROCEDURE sp_restaurar_junta_vecinos(IN p_id INT)
+BEGIN
+    UPDATE juntas_vecinos SET deleted = 0, updated_at = NOW() WHERE id_junta = p_id AND deleted = 1;
+END//
+
+-- =========================
+-- TABLA: personas
+-- =========================
+CREATE PROCEDURE sp_insertar_persona(IN p_rut VARCHAR(15), IN p_nombre VARCHAR(100), IN p_direccion VARCHAR(255), IN p_telefono VARCHAR(20), IN p_correo VARCHAR(100), IN p_id_comuna INT, IN p_created_by INT, OUT p_nuevo_id INT)
+BEGIN
+    INSERT INTO personas(rut, nombre, direccion, telefono, correo_electronico, id_comuna, created_by) 
+    VALUES(p_rut, p_nombre, p_direccion, p_telefono, p_correo, p_id_comuna, p_created_by);
+    SET p_nuevo_id = LAST_INSERT_ID();
+END//
+
+CREATE PROCEDURE sp_listar_personas_activos()
+BEGIN
+    SELECT * FROM personas WHERE deleted = 0;
+END//
+
+CREATE PROCEDURE sp_listar_personas_todos()
+BEGIN
+    SELECT * FROM personas;
+END//
+
+CREATE PROCEDURE sp_borrado_logico_persona(IN p_id INT)
+BEGIN
+    UPDATE personas SET deleted = 1, updated_at = NOW() WHERE id_persona = p_id AND deleted = 0;
+END//
+
+CREATE PROCEDURE sp_restaurar_persona(IN p_id INT)
+BEGIN
+    UPDATE personas SET deleted = 0, updated_at = NOW() WHERE id_persona = p_id AND deleted = 1;
+END//
+
+-- =========================
+-- TABLA: tipo_usuario
+-- =========================
+CREATE PROCEDURE sp_insertar_tipo_usuario(IN p_nombre VARCHAR(50), IN p_descripcion VARCHAR(255), IN p_created_by INT, OUT p_nuevo_id INT)
+BEGIN
+    INSERT INTO tipo_usuario(nombre_tipo, descripcion, created_by) VALUES(p_nombre, p_descripcion, p_created_by);
+    SET p_nuevo_id = LAST_INSERT_ID();
+END//
+
+CREATE PROCEDURE sp_listar_tipo_usuario_activos()
+BEGIN
+    SELECT * FROM tipo_usuario WHERE deleted = 0;
+END//
+
+CREATE PROCEDURE sp_listar_tipo_usuario_todos()
+BEGIN
+    SELECT * FROM tipo_usuario;
+END//
+
+CREATE PROCEDURE sp_borrado_logico_tipo_usuario(IN p_id INT)
+BEGIN
+    UPDATE tipo_usuario SET deleted = 1, updated_at = NOW() WHERE id_tipo_usuario = p_id AND deleted = 0;
+END//
+
+CREATE PROCEDURE sp_restaurar_tipo_usuario(IN p_id INT)
+BEGIN
+    UPDATE tipo_usuario SET deleted = 0, updated_at = NOW() WHERE id_tipo_usuario = p_id AND deleted = 1;
+END//
+
+-- =========================
+-- TABLA: usuarios
+-- =========================
+CREATE PROCEDURE sp_insertar_usuario(IN p_id_persona INT, IN p_id_tipo_usuario INT, IN p_nombre_usuario VARCHAR(50), IN p_contrasena VARCHAR(255), IN p_created_by INT, OUT p_nuevo_id INT)
+BEGIN
+    INSERT INTO usuarios(id_persona, id_tipo_usuario, nombre_usuario, contrasena, created_by)
+    VALUES(p_id_persona, p_id_tipo_usuario, p_nombre_usuario, p_contrasena, p_created_by);
+    SET p_nuevo_id = LAST_INSERT_ID();
+END//
+
+CREATE PROCEDURE sp_listar_usuarios_activos()
+BEGIN
+    SELECT * FROM usuarios WHERE deleted = 0;
+END//
+
+CREATE PROCEDURE sp_listar_usuarios_todos()
+BEGIN
+    SELECT * FROM usuarios;
+END//
+
+CREATE PROCEDURE sp_borrado_logico_usuario(IN p_id INT)
+BEGIN
+    UPDATE usuarios SET deleted = 1, updated_at = NOW() WHERE id_usuario = p_id AND deleted = 0;
+END//
+
+CREATE PROCEDURE sp_restaurar_usuario(IN p_id INT)
+BEGIN
+    UPDATE usuarios SET deleted = 0, updated_at = NOW() WHERE id_usuario = p_id AND deleted = 1;
+END//
+
+-- =========================
+-- TABLA: tipo_reporte
+-- =========================
+CREATE PROCEDURE sp_insertar_tipo_reporte(IN p_nombre VARCHAR(50), IN p_descripcion VARCHAR(255), IN p_created_by INT, OUT p_nuevo_id INT)
+BEGIN
+    INSERT INTO tipo_reporte(nombre_tipo, descripcion, created_by)
+    VALUES(p_nombre, p_descripcion, p_created_by);
+    SET p_nuevo_id = LAST_INSERT_ID();
+END//
+
+CREATE PROCEDURE sp_listar_tipo_reporte_activos()
+BEGIN
+    SELECT * FROM tipo_reporte WHERE deleted = 0;
+END//
+
+CREATE PROCEDURE sp_listar_tipo_reporte_todos()
+BEGIN
+    SELECT * FROM tipo_reporte;
+END//
+
+CREATE PROCEDURE sp_borrado_logico_tipo_reporte(IN p_id INT)
+BEGIN
+    UPDATE tipo_reporte SET deleted = 1, updated_at = NOW() WHERE id_tipo_reporte = p_id AND deleted = 0;
+END//
+
+CREATE PROCEDURE sp_restaurar_tipo_reporte(IN p_id INT)
+BEGIN
+    UPDATE tipo_reporte SET deleted = 0, updated_at = NOW() WHERE id_tipo_reporte = p_id AND deleted = 1;
+END//
+
+--
